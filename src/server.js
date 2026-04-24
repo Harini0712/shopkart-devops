@@ -5,28 +5,53 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// =======================
+// 🔹 MIDDLEWARE
+// =======================
 app.use(cors());
 app.use(express.json());
 
-// Serve static frontend files from /public
+// =======================
+// 🔹 SERVE FRONTEND
+// =======================
 app.use(express.static(path.join(__dirname, '../public')));
 
-// API Routes
+// =======================
+// 🔹 API ROUTES
+// =======================
 app.use('/api/products', require('./routes/products'));
 
-// Health check endpoint (useful for DevOps / load balancers)
+// Example login route (for testing SonarQube issues)
+app.get('/api/login', (req, res) => {
+    const user = req.query.user;
+
+    // Intentional bad practice (for SonarQube demo)
+    if (user == "admin") {   // ❌ weak comparison
+        return res.json({ status: "success", message: "Welcome Admin 🎉" });
+    }
+
+    return res.json({ status: "fail", message: "Invalid User ❌" });
+});
+
+// =======================
+// 🔹 HEALTH CHECK (DOCKER)
+// =======================
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', uptime: process.uptime() });
+    res.send("OK");
 });
 
-// Catch-all: serve index.html for any other route
+// =======================
+// 🔹 FALLBACK ROUTE
+// =======================
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
+    res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
+// =======================
+// 🔹 START SERVER
+// =======================
 app.listen(PORT, () => {
-  console.log(`ShopKart server running on http://localhost:${PORT}`);
+    console.log(`🚀 ShopKart server running on port ${PORT}`);
 });
 
 module.exports = app;
