@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShopKart — Premium Tech Store</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-inner">
+      <div class="logo">Shop<span>Kart</span></div>
+      <div class="nav-links">
+        <a href="#">Deals</a>
+        <a href="#">Categories</a>
+        <a href="#">About</a>
+      </div>
+      <div class="nav-actions">
+        <button class="cart-btn" onclick="toggleCart()">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-text">
+      <p class="hero-eyebrow">Free shipping on orders over ₹999</p>
+      <h1>Tech that<br/><em>actually</em> matters.</h1>
+      <p class="hero-sub">Curated premium gadgets. Real prices. No fluff.</p>
+    </div>
+    <div class="hero-badge">
+      <span>Up to</span>
+      <strong>40%</strong>
+      <span>OFF</span>
+    </div>
+  </section>
+
+  <!-- FILTERS -->
+  <section class="filters-section">
+    <div class="filters-inner">
+      <div class="category-filters" id="categoryFilters">
+        <button class="filter-btn active" data-cat="All">All</button>
+        <button class="filter-btn" data-cat="Audio">Audio</button>
+        <button class="filter-btn" data-cat="Laptops">Laptops</button>
+        <button class="filter-btn" data-cat="Phones">Phones</button>
+        <button class="filter-btn" data-cat="Tablets">Tablets</button>
+        <button class="filter-btn" data-cat="Monitors">Monitors</button>
+        <button class="filter-btn" data-cat="Accessories">Accessories</button>
+      </div>
+      <select class="sort-select" id="sortSelect">
+        <option value="">Sort by</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="rating">Top Rated</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- PRODUCT GRID -->
+  <main class="products-section">
+    <div class="section-header">
+      <h2>Products <span id="productCount"></span></h2>
+    </div>
+    <div class="product-grid" id="productGrid">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading products...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- CART DRAWER -->
+  <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+  <aside class="cart-drawer" id="cartDrawer">
+    <div class="cart-header">
+      <h3>Your Cart</h3>
+      <button onclick="toggleCart()" class="close-btn">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="cart-empty">
+        <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <p>Your cart is empty</p>
+      </div>
+    </div>
+    <div class="cart-footer" id="cartFooter" style="display:none">
+      <div class="cart-total">
+        <span>Total</span>
+        <strong id="cartTotal">₹0</strong>
+      </div>
+      <button class="checkout-btn">Proceed to Checkout</button>
+    </div>
+  </aside>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <footer class="footer">
+    <p>ShopKart &copy; 2025 &mdash; Built with Node.js + Express &mdash; Deployed via Jenkins + Docker + AWS EC2</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
