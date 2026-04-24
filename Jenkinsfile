@@ -14,6 +14,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
+                echo 'Pulling code from GitHub...'
                 checkout scm
             }
         }
@@ -27,11 +28,15 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh '''
-                        ${SONAR_SCANNER_HOME}/bin/sonar-scanner \
-                        -Dsonar.projectKey=shopkart-devops \
-                        -Dsonar.sources=src,public
-                    '''
+                    script {
+                        def scannerHome = tool 'sonar-scanner'
+                        sh """
+                            ${scannerHome}/bin/sonar-scanner \
+                            -Dsonar.projectKey=shopkart-devops \
+                            -Dsonar.sources=src,public \
+                            -Dsonar.host.url=http://host.docker.internal:9000
+                        """
+                    }
                 }
             }
         }
@@ -57,6 +62,15 @@ pipeline {
                 sh "docker push ${IMAGE_NAME}:${BUILD_NUMBER}"
                 sh "docker push ${IMAGE_NAME}:latest"
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline SUCCESS 🚀'
+        }
+        failure {
+            echo 'Pipeline FAILED ❌'
         }
     }
 }
