@@ -3,7 +3,6 @@ pipeline {
 
     tools {
         nodejs 'node'
-        sonarQubeScanner 'sonar-scanner'
     }
 
     environment {
@@ -15,7 +14,6 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                echo 'Pulling code from GitHub...'
                 checkout scm
             }
         }
@@ -30,7 +28,7 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     sh '''
-                        sonar-scanner \
+                        ${SONAR_SCANNER_HOME}/bin/sonar-scanner \
                         -Dsonar.projectKey=shopkart-devops \
                         -Dsonar.sources=src,public
                     '''
@@ -59,15 +57,6 @@ pipeline {
                 sh "docker push ${IMAGE_NAME}:${BUILD_NUMBER}"
                 sh "docker push ${IMAGE_NAME}:latest"
             }
-        }
-    }
-
-    post {
-        success {
-            echo 'Pipeline SUCCESS 🚀'
-        }
-        failure {
-            echo 'Pipeline FAILED ❌'
         }
     }
 }
