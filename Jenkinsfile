@@ -1,20 +1,16 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs 'node'
-    }
-
     environment {
-        IMAGE_NAME = 'harini0712/shopkart-devops'
-        SONARQUBE_SERVER = 'SonarQube'
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
+        IMAGE_NAME = 'harinimuruges/shopkart-devops'
     }
 
     stages {
 
         stage('Checkout') {
             steps {
-                echo 'Cloning repo...'
+                echo 'Pulling code from GitHub...'
                 checkout scm
             }
         }
@@ -31,9 +27,7 @@ pipeline {
                     sh '''
                         sonar-scanner \
                         -Dsonar.projectKey=shopkart-devops \
-                        -Dsonar.sources=src,public \
-                        -Dsonar.host.url=http://host.docker.internal:9000 \
-                        -Dsonar.login=$SONAR_AUTH_TOKEN
+                        -Dsonar.sources=src,public
                     '''
                 }
             }
@@ -54,43 +48,21 @@ pipeline {
             }
         }
 
-        stage('Docker Login') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    sh "echo $PASS | docker login -u $USER --password-stdin"
-                }
-            }
-        }
-
         stage('Docker Push') {
             steps {
+                sh "echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin"
                 sh "docker push ${IMAGE_NAME}:${BUILD_NUMBER}"
                 sh "docker push ${IMAGE_NAME}:latest"
-            }
-        }
-
-        stage('Deploy to EC2') {
-            steps {
-                sshagent(['ec2-ssh-key']) {
-                    sh """
-                        ssh -o StrictHostKeyChecking=no ubuntu@<EC2-IP> '
-                        docker pull ${IMAGE_NAME}:latest &&
-                        docker stop shopkart || true &&
-                        docker rm shopkart || true &&
-                        docker run -d -p 3000:3000 --name shopkart ${IMAGE_NAME}:latest
-                        '
-                    """
-                }
             }
         }
     }
 
     post {
         success {
-            echo '🚀 SUCCESS: App deployed!'
+            echo 'Pipeline SUCCESS 🚀'
         }
         failure {
-            echo '❌ FAILED: Check logs or SonarQube'
+            echo 'Pipeline FAILED ❌'
         }
     }
 }
